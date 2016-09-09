@@ -17,10 +17,8 @@ auto eth0 eth1 eth2 eth3
 iface eth0 inet static
     address 10.0.11.100
     netmask 255.255.255.0
-    network 10.0.11.0
     gateway 10.0.11.1
-    powersave 0
-
+ 
 iface eth1 inet manual
     up ifconfig $IFACE 0.0.0.0 up
     down ifconfig $IFACE down
@@ -57,20 +55,16 @@ describe('Scriptrunner', () => {
         });
     });
 
-    it('should return the expected address, netmask, network, gateway and powersave for static entry', (done) => {
+    it('should return the expected address, netmask, and gateway for static entry', (done) => {
       const expectedAddress = '10.0.11.100';
       const expectedNetmask = '255.255.255.0';
-      const expectedNetwork = '10.0.11.0';
       const expectedGateway = '10.0.11.1';
-      const expectedPowersave = '0';
 
       scriptRunner.read(testInterfacePath, 'eth0')
         .then((interfaceInfo) => {
           interfaceInfo.address.should.equal(expectedAddress);
           interfaceInfo.netmask.should.equal(expectedNetmask);
-          interfaceInfo.network.should.equal(expectedNetwork);
           interfaceInfo.gateway.should.equal(expectedGateway);
-          interfaceInfo.powersave.should.equal(expectedPowersave);
           done();
         });
     });
@@ -80,9 +74,7 @@ describe('Scriptrunner', () => {
   describe('#write()', function () {
     const expectedAddress = '99.88.77.100';
     const expectedNetmask = '255.255.0.0';
-    const expectedNetwork = '10.0.11.0';
     const expectedGateway = '192.168.12.1';
-    const expectedPowersave = '0';
 
     it('should return the written info in the promise resolve', (done) => {
       scriptRunner.read(testInterfacePath, 'eth0')
@@ -90,15 +82,11 @@ describe('Scriptrunner', () => {
           scriptRunner.write(testInterfacePath, 'eth0', {
             gateway: expectedGateway,
             netmask: expectedNetmask,
-            network: expoctedNetwork,
-            address: expectedAddress,
-            powersave: expectedPowersave
+            address: expectedAddress
           }).then((written) => {
             written.address.should.equal(expectedAddress);
             written.netmask.should.equal(expectedNetmask);
-            written.network.should.equal(expectedNetwork);
             written.gateway.should.equal(expectedGateway);
-            written.powersave.should.equal(expectedPowersave);
             done();
           });
         });
@@ -111,16 +99,12 @@ describe('Scriptrunner', () => {
           scriptRunner.write(testInterfacePath, 'eth3', {
             address: expectedAddress,
             netmask: expectedNetmask,
-            network: expoctedNetwork,
-            gateway: expectedGateway,
-            powersave: expectedPowersave
+            gateway: expectedGateway
           }).then((written) => {
             scriptRunner.read(testInterfacePath, 'eth3').then((newContent) => {
               newContent.address.should.equal(expectedAddress);
               newContent.netmask.should.equal(expectedNetmask);
-              newContent.network.should.equal(expectedNetwork);
               newContent.gateway.should.equal(expectedGateway);
-              newContent.powersave.should.equal(expectedPowersave);
               done();
             });
           });
@@ -156,9 +140,7 @@ describe('Scriptrunner', () => {
             scriptRunner.read(testInterfacePath, 'eth0').then((newContent) => {
               newContent.address.should.equal(expectedAddress);
               newContent.netmask.should.equal(existingInterface.netmask);
-              newContent.network.should.equal(existingInterface.network);
               newContent.gateway.should.equal(existingInterface.gateway);
-              newContent.powersave.should.equal(existingInterface.powersave);
               done();
             });
           });
@@ -176,9 +158,7 @@ describe('Scriptrunner', () => {
             scriptRunner.read(testInterfacePath, 'eth0').then((newContent) => {
               newContent.address.should.equal(existingInterface.address);
               newContent.netmask.should.equal(expectedNetmask);
-              newContent.network.should.equal(expectedNetwork);
               newContent.gateway.should.equal(existingInterface.gateway);
-              newContent.powersave.should.equal(expectedPowersave);
               done();
             });
           });
@@ -194,10 +174,8 @@ describe('Scriptrunner', () => {
             gateway: expectedGateway
           }).then((written) => {
             scriptRunner.read(testInterfacePath, 'eth0').then((newContent) => {
-              newContent.powersave.should.equal(expectedPowersave);
               newContent.gateway.should.equal(expectedGateway);
               newContent.netmask.should.equal(existingInterface.netmask);
-              newContent.network.should.equal(existingInterface.network);
               newContent.address.should.equal(existingInterface.address);
               done();
             });

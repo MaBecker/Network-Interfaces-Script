@@ -74,12 +74,20 @@ BEGIN { start = 0;
             gateway = $2;
             gotAddr = 1;
         }
+        if ($1 == "network") {
+            network = $2;
+            gotAddr = 1;
+        }
+        if ($1 == "powersave") {
+            powersave = $2;
+            gotAddr = 1;
+        }
     }
 }
  
 END {
     if (gotAddr) {
-        printf("%s %s %s\n", address, netmask, gateway);
+        printf("%s %s %s %s %s\n", address, netmask, network, gateway, powersave);
         exit 0;
     } else {
         if (gotTypeNoAddr) {

@@ -1,4 +1,4 @@
-function writeStatic(addr, nw, nm, gw, dns) {
+function writeStatic(addr, nw, nm, gw, dns, powersave) {
 
     if (length(addr)) 
         print "    address ", addr
@@ -14,18 +14,22 @@ function writeStatic(addr, nw, nm, gw, dns) {
 
     if (length(dns))
         print "    dns-nameservers ", dns
+
+    if (length(powersave))
+        print "    powersave ", powersave
 }
 
 function usage() {
         print "awk -f changeInterfaces.awk <interfaces file> dev=<eth device> \n" \
             "       [address=<ip addr>] [gateway=<ip addr>] [netmask=<ip addr>]\n" \
-            "       [network=<ip addr>] [mode=dhcp|static] [dns=<ip addr [ip addr ...]>] [arg=debug]"
+            "       [network=<ip addr>] [mode=dhcp|static] [dns=<ip addr [ip addr ...]>]\n" \
+            "       [powersave=<mode>] [arg=debug]"
 }
 
 BEGIN { start = 0;
     dnsVal = "";
     
-    if (ARGC < 3 || ARGC > 10) {
+    if (ARGC < 3 || ARGC > 11) {
         usage();
         exit 1;
     }
@@ -42,6 +46,8 @@ BEGIN { start = 0;
             netmask = pair[2];
         else if (pair[1] == "dev")
             device = pair[2];
+        else if (pair[1] == "powersave")
+            powersave = pair[2];   
         else if (pair[1] == "dns") {
             if (!length(pair[2])) {
                 dnsVal = "clear";
@@ -175,6 +181,9 @@ BEGIN { start = 0;
             else if ($1 == "network" && length(network))
                 print "    network ", network; 
 
+            else if ($1 == "powersave" && length(powersave))
+                print "    powersave ", powersave; 
+
             else if ($1 == "dns-nameservers") {
                 # Overwrite it if dns is defined.
                 # Clear the dns entry if the parameter is empty string
@@ -197,11 +206,11 @@ BEGIN { start = 0;
 
     # If already defined dhcp, then dump the network properties
     if (definedDhcp) {
-        writeStatic(address, network, netmask, gateway, dnsVal);
+        writeStatic(address, network, netmask, gateway, powersave, dnsVal);
         definedDhcp = 0;
         next;
     } else if (definedManual) {
-        writeStatic(address, network, netmask, gateway, dnsVal);
+        writeStatic(address, network, netmask, gateway, powersave, dnsVal);
         definedManual = 0;
         next;
     }
