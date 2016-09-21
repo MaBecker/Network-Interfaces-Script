@@ -90,7 +90,7 @@ describe('Scriptrunner', () => {
           scriptRunner.write(testInterfacePath, 'eth0', {
             gateway: expectedGateway,
             netmask: expectedNetmask,
-            network: expoctedNetwork,
+            network: expectedNetwork,
             address: expectedAddress,
             powersave: expectedPowersave
           }).then((written) => {
@@ -111,7 +111,7 @@ describe('Scriptrunner', () => {
           scriptRunner.write(testInterfacePath, 'eth3', {
             address: expectedAddress,
             netmask: expectedNetmask,
-            network: expoctedNetwork,
+            network: expectedNetwork,
             gateway: expectedGateway,
             powersave: expectedPowersave
           }).then((written) => {
