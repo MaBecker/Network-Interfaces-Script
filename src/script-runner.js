@@ -7,7 +7,7 @@ const READ_SCRIPT_PATH  = path.join(__dirname, './awk/readInterfaces.awk');
 const WRITE_SCRIPT_PATH = path.join(__dirname, './awk/changeInterface.awk');
 const DEFAULT_INTERFACE = 'eth0';
 const DEFAULT_INTERFACE_FILE_LOCATION = '/etc/network/interfaces';
-const ADDRESS_RETURN_ORDER = ['address', 'netmask', 'gateway'];
+const ADDRESS_RETURN_ORDER = ['address', 'netmask', 'network', 'gateway', 'powersave'];
 
 
 const convertArgsForScript = function convertArgsForScript (interfacesFilePath, args) {
@@ -36,13 +36,13 @@ const formatResult = function formatResult (textResult) {
       formattedResult[ADDRESS_RETURN_ORDER[i]] = rawResult[i];
     }
   }
-
+console.log(formattedResult);
   return formattedResult;
 };
 
 const writeToFile = function writeToFile(filePath, content) {
   return new Promise((resolve, reject) => {
-    exec(`echo "${content}" | sudo tee  ${filePath} > /dev/null`, (error, stdout, stderr) => {
+    exec(`echo "${content}" | tee  ${filePath} > /dev/null`, (error, stdout, stderr) => {
       if (error) {
         reject(error);
       } else {
@@ -70,6 +70,7 @@ const read = function read (interfacesFilePath, interfaceName) {
   return new Promise((resolve, reject) => {
     runScript(READ_SCRIPT_PATH, [interfacesFilePath, `device=${interfaceName}`].join(' '))
       .then((success) => {
+        console.log(success);
          resolve(formatResult(success));
       }).catch((error) => {
         reject(error);
