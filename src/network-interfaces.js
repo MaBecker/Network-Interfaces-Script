@@ -1,5 +1,5 @@
 'use strict';
-const scriptRunner = require('./script-runner.js');
+var scriptRunner = require('./script-runner.js');
 
 module.exports = class NetworkInterface {
 	constructor (interfacesFilePath) {
