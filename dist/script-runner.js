@@ -2,6 +2,7 @@
 
 var exec = require('child_process').exec;
 var path = require('path');
+var Promise = require('promise-polyfill');
 
 var READ_SCRIPT_PATH = path.join(__dirname, './awk/readInterfaces.awk');
 var WRITE_SCRIPT_PATH = path.join(__dirname, './awk/changeInterface.awk');
