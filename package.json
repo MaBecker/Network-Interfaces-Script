@@ -26,5 +26,7 @@
     "chai-as-promised": "^5.2.0",
     "mocha": "^2.4.5"
   },
-  "dependencies": {}
+  "dependencies": {
+    "promise-polyfill": "^6.0.2"
+  }
 }
