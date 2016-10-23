@@ -78,6 +78,10 @@ BEGIN { start = 0;
             network = $2;
             gotAddr = 1;
         }
+        if ($1 == "dns-nameservers") {
+            dns = $2;
+            gotAddr = 1;
+        }
         if ($1 == "powersave") {
             powersave = $2;
             gotAddr = 1;
@@ -87,7 +91,7 @@ BEGIN { start = 0;
  
 END {
     if (gotAddr) {
-        printf("%s %s %s %s %s\n", address, netmask, network, gateway, powersave);
+        printf("%s %s %s %s %s %s\n", address, netmask, network, gateway, dns, powersave);
         exit 0;
     } else {
         if (gotTypeNoAddr) {

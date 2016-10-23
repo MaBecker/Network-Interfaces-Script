@@ -181,9 +181,6 @@ BEGIN { start = 0;
             else if ($1 == "network" && length(network))
                 print "    network ", network; 
 
-            else if ($1 == "powersave" && length(powersave))
-                print "    powersave ", powersave; 
-
             else if ($1 == "dns-nameservers") {
                 # Overwrite it if dns is defined.
                 # Clear the dns entry if the parameter is empty string
@@ -196,6 +193,8 @@ BEGIN { start = 0;
                     print $0;
                 }
             }
+            else if ($1 == "powersave" && length(powersave))
+                print "    powersave ", powersave; 
 
             else if (!definedRemove) {
                 print $0;
@@ -206,11 +205,11 @@ BEGIN { start = 0;
 
     # If already defined dhcp, then dump the network properties
     if (definedDhcp) {
-        writeStatic(address, network, netmask, gateway, powersave, dnsVal);
+        writeStatic(address, network, netmask, gateway, powersave, dnsVal, powersave);
         definedDhcp = 0;
         next;
     } else if (definedManual) {
-        writeStatic(address, network, netmask, gateway, powersave, dnsVal);
+        writeStatic(address, network, netmask, gateway, powersave, dnsVal, powersave);
         definedManual = 0;
         next;
     }
@@ -224,12 +223,12 @@ END {
     if (definedDhcp) {
         # This bit is useful at the condition when the last line is
         # iface dhcp
-        writeStatic(address, network, netmask, gateway, dnsVal);
+        writeStatic(address, network, netmask, gateway, dnsVal, powersave);
     } 
     else if (definedManual) {
         # This bit is useful at the condition when the last line is
         # iface dhcp
-        writeStatic(address, network, netmask, gateway, dnsVal);
+        writeStatic(address, network, netmask, gateway, dnsVal, powersave);
     }
     else if (definedStatic) {
         # Condition for last line and adding dns entry

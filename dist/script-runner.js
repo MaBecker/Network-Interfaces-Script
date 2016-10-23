@@ -8,7 +8,7 @@ var READ_SCRIPT_PATH = path.join(__dirname, './awk/readInterfaces.awk');
 var WRITE_SCRIPT_PATH = path.join(__dirname, './awk/changeInterface.awk');
 var DEFAULT_INTERFACE = 'eth0';
 var DEFAULT_INTERFACE_FILE_LOCATION = '/etc/network/interfaces';
-var ADDRESS_RETURN_ORDER = ['address', 'netmask', 'network', 'gateway', 'powersave'];
+var ADDRESS_RETURN_ORDER = ['address', 'netmask', 'network', 'gateway', 'dns', 'powersave'];
 
 var convertArgsForScript = function convertArgsForScript(interfacesFilePath, args) {
   var converted = [interfacesFilePath];
