@@ -205,11 +205,11 @@ BEGIN { start = 0;
 
     # If already defined dhcp, then dump the network properties
     if (definedDhcp) {
-        writeStatic(address, network, netmask, gateway, powersave, dnsVal, powersave);
+        writeStatic(address, network, netmask, gateway, dnsVal, powersave);
         definedDhcp = 0;
         next;
     } else if (definedManual) {
-        writeStatic(address, network, netmask, gateway, powersave, dnsVal, powersave);
+        writeStatic(address, network, netmask, gateway, dnsVal, powersave);
         definedManual = 0;
         next;
     }
