@@ -1,7 +1,8 @@
 'use strict';
 
 const exec = require('child_process').exec;
-const path     = require('path');
+const path = require('path');
+var Promise = require('promise-polyfill');
 
 const READ_SCRIPT_PATH  = path.join(__dirname, './awk/readInterfaces.awk');
 const WRITE_SCRIPT_PATH = path.join(__dirname, './awk/changeInterface.awk');
