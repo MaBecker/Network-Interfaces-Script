@@ -3,9 +3,6 @@ function writeStatic(addr, nw, nm, gw, dns, powersave) {
     if (length(addr)) 
         print "    address ", addr
     
-    if (length(nw)) 
-        print "    network ", nw 
-
     if (length(nm)) 
         print "    netmask ", nm
 
@@ -14,16 +11,13 @@ function writeStatic(addr, nw, nm, gw, dns, powersave) {
 
     if (length(dns))
         print "    dns-nameservers ", dns
-
-    if (length(powersave))
-        print "    powersave ", powersave
 }
 
 function usage() {
         print "awk -f changeInterfaces.awk <interfaces file> dev=<eth device> \n" \
             "       [address=<ip addr>] [gateway=<ip addr>] [netmask=<ip addr>]\n" \
-            "       [network=<ip addr>] [mode=dhcp|static] [dns=<ip addr [ip addr ...]>]\n" \
-            "       [powersave=<mode>] [arg=debug]"
+            "       [mode=dhcp|static] [dns=<ip addr [ip addr ...]>]\n" \
+            "       [arg=debug]"
 }
 
 BEGIN { start = 0;
@@ -40,14 +34,10 @@ BEGIN { start = 0;
             address = pair[2];
         else if (pair[1] == "gateway")
             gateway = pair[2];
-        else if (pair[1] == "network")
-            network = pair[2];
         else if (pair[1] == "netmask")
             netmask = pair[2];
         else if (pair[1] == "dev")
             device = pair[2];
-        else if (pair[1] == "powersave")
-            powersave = pair[2];   
         else if (pair[1] == "dns") {
             if (!length(pair[2])) {
                 dnsVal = "clear";
@@ -105,7 +95,7 @@ BEGIN { start = 0;
                 definedDhcp=1;
                 # Change to static if defined properties
                 if (length(address) || length (gateway) || 
-                    length(netmask) || length (network) || static) {
+                    length(netmask) || static) {
                     print "iface", device, "inet static";
                     next;
                 }
@@ -115,7 +105,7 @@ BEGIN { start = 0;
                 definedManual=1;
                 # Change to static if defined properties
                 if (length(address) || length (gateway) || 
-                    length(netmask) || length (network) || static) {
+                    length(netmask) || static) {
                     print "iface", device, "inet static";
                     next;
                 }
@@ -178,24 +168,18 @@ BEGIN { start = 0;
             else if ($1 == "gateway" && length(gateway))
                 print "    gateway ", gateway; 
 
-            else if ($1 == "network" && length(network))
-                print "    network ", network; 
-
             else if ($1 == "dns-nameservers") {
                 # Overwrite it if dns is defined.
                 # Clear the dns entry if the parameter is empty string
                 if (length(dnsVal) && dnsVal != "clear") {
                     print "    dns-nameservers ", dnsVal;
                     # Important - to reset the dns. So that we know whether
-                    # dns has been updated to the interfaces file
+                   # dns has been updated to the interfaces file
                     dnsVal = "";
                 } else if (!length(dnsVal)) {
                     print $0;
                 }
             }
-            else if ($1 == "powersave" && length(powersave))
-                print "    powersave ", powersave; 
-
             else if (!definedRemove) {
                 print $0;
             }
@@ -205,11 +189,11 @@ BEGIN { start = 0;
 
     # If already defined dhcp, then dump the network properties
     if (definedDhcp) {
-        writeStatic(address, network, netmask, gateway, dnsVal, powersave);
+        writeStatic(address, netmask, gateway, dnsVal);
         definedDhcp = 0;
         next;
     } else if (definedManual) {
-        writeStatic(address, network, netmask, gateway, dnsVal, powersave);
+        writeStatic(address, netmask, gateway, dnsVal);
         definedManual = 0;
         next;
     }
@@ -223,12 +207,12 @@ END {
     if (definedDhcp) {
         # This bit is useful at the condition when the last line is
         # iface dhcp
-        writeStatic(address, network, netmask, gateway, dnsVal, powersave);
+        writeStatic(address, netmask, gateway, dnsVal);
     } 
     else if (definedManual) {
         # This bit is useful at the condition when the last line is
         # iface dhcp
-        writeStatic(address, network, netmask, gateway, dnsVal, powersave);
+        writeStatic(address, netmask, gateway, dnsVal);
     }
     else if (definedStatic) {
         # Condition for last line and adding dns entry
